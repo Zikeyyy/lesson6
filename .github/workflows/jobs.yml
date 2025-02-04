@@ -18,6 +18,20 @@ jobs:
     steps:
       - run: sleep 15
       
+  build-job:
+    name: build job
+    runs-on: ubuntu-latest
+    outputs:
+      build-output: ${{ steps.buildStep.outputs.buildOut }}
+    containers:
+      image: oven/bun:slim
+    steps:
+      - name: define output variables
+        id: buildStep
+        run: |
+          bunver=$(bun --version)
+          echo "buildOut=$bunver" >> "$GITHUB_OUTPUT"
+
   deploy-job:
     name: deploy job
     runs-on: ubuntu-latest
@@ -25,17 +39,3 @@ jobs:
     steps:
       - name: test build output
         run: echo ${{ needs.build-job.outputs.build-output }}
-        
-  build-job:
-    outputs:
-      build-output: ${{ steps.buildStep.outputs.bildOut }}
-  name: build jobs
-  runs-on: ubuntu-latest
-  containers:
-    image: oven/bun:slim
-  steps:
-    - name: define output variables
-      id: buildsetup
-      run: |
-        bunver=$(bun --version)
-        echo "buildOut=$bunver" >> "$GITHUB_OUTPUT"
